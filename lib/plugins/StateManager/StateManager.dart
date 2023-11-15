@@ -59,15 +59,22 @@ class Isolated<T> {
     return object;
   }
 
-  getRepos() {
-    return _repositories;
+  getRepos<G>({String? typeName}) {
+    List<G> values = [];
+
+    _repositories.forEach((key, value) {
+      value.forEach((key, val) {
+        if (typeName == key) {
+          values.add(value.values.first as G);
+        }
+      });
+    });
+    return values;
   }
 
   getRepoObjects() {
     _repositories.forEach((key, value) {
-      value.forEach((key, val) {
-        print(val);
-      });
+      value.forEach((key, val) {});
     });
   }
 }
@@ -118,6 +125,14 @@ class StateManager {
           .getFromRepo(identifier: identifier, typeName: functionName);
     }
     return null;
+  }
+
+  List<Function> getFunctions<T>({String? identifier, String? functionName}) {
+    List<Function> funcs = [];
+    if (_functions[T] != null) {
+      return _functions[T]!.getRepos<Function>(typeName: functionName);
+    }
+    return funcs;
   }
 
   removeFunction<T>({String? identifier, required String functionName}) {

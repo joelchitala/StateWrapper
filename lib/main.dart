@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:statewrapper/UI/wrappers/StateVariable.dart';
 import 'package:statewrapper/plugins/StateManager/StateManager.dart';
+import 'package:statewrapper/test.dart';
 
 void main() {
   runApp(const MainApp());
@@ -12,6 +13,8 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final StateManager _stateManager = StateManager();
+    final Counter counter = Counter();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -19,21 +22,31 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: Scaffold(
-        // appBar: AppBar(
-        //   actions: [
-        //     ElevatedButton(
-        //         onPressed: () {
-        //           var open =
-        //               _stateManager.getObject<BoxChange, VariableWrapper>(
-        //                   identifier: "_", objectName: "open");
+        appBar: AppBar(
+          actions: [
+            // ElevatedButton(
+            //     onPressed: () {
+            //       var open =
+            //           _stateManager.getObject<BoxChange, VariableWrapper>(
+            //               identifier: "_", objectName: "open");
 
-        //           if (open != null) {
-        //             open.value = open.value ? false : true;
-        //           }
-        //         },
-        //         child: const Text("Change"))
-        //   ],
-        // ),
+            //       if (open != null) {
+            //         open.value = open.value ? false : true;
+            //       }
+            //     },
+            //     child: const Text("Change"))
+            ElevatedButton(
+                onPressed: () {
+                  // var funcs = _stateManager.getFunctions<Counter>(
+                  //     functionName: "setState");
+
+                  // print(funcs);
+
+                  counter.increment();
+                },
+                child: Text("Press Me"))
+          ],
+        ),
         body: MainScreen(),
       ),
     );
@@ -52,16 +65,25 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // ChangeBtn(),
-        Center(
-          child: BoxChange(),
-        ),
-        Center(
-          child: BoxChange(identifier: "box2"),
-        ),
+        Center(child: CounterReactful()),
+        Center(child: CounterReactful2()),
       ],
     );
+
+    // const Column(
+    //   mainAxisAlignment: MainAxisAlignment.center,
+    //   children: [
+    //     // ChangeBtn(),
+    //     Center(
+    //       child: BoxChange(),
+    //     ),
+    //     Center(
+    //       child: BoxChange(),
+    //     ),
+    //   ],
+    // );
   }
 }
 
