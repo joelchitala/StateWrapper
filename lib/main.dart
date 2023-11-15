@@ -19,21 +19,21 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: Scaffold(
-        appBar: AppBar(
-          actions: [
-            ElevatedButton(
-                onPressed: () {
-                  var open =
-                      _stateManager.getObject<BoxChange, VariableWrapper>(
-                          identifier: "_", objectName: "open");
+        // appBar: AppBar(
+        //   actions: [
+        //     ElevatedButton(
+        //         onPressed: () {
+        //           var open =
+        //               _stateManager.getObject<BoxChange, VariableWrapper>(
+        //                   identifier: "_", objectName: "open");
 
-                  if (open != null) {
-                    open.value = open.value ? false : true;
-                  }
-                },
-                child: const Text("Change"))
-          ],
-        ),
+        //           if (open != null) {
+        //             open.value = open.value ? false : true;
+        //           }
+        //         },
+        //         child: const Text("Change"))
+        //   ],
+        // ),
         body: MainScreen(),
       ),
     );
@@ -53,7 +53,7 @@ class _MainScreenState extends State<MainScreen> {
     return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ChangeBtn(),
+        // ChangeBtn(),
         Center(
           child: BoxChange(),
         ),
@@ -119,7 +119,7 @@ class _BoxChangeState extends StateVariableWrapper<BoxChange> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    double factor = 0.3;
+    double factor = 0.4;
     return Container(
       color: open.value ? Colors.blue : Colors.amber,
       width: screenSize.width * factor,
@@ -133,6 +133,11 @@ class _BoxChangeState extends StateVariableWrapper<BoxChange> {
                 counter.value += 1;
               },
               child: const Text("Increment")),
+          ElevatedButton(
+              onPressed: () {
+                open.value = open.value ? false : true;
+              },
+              child: const Text("Change Color")),
         ],
       ),
     );
