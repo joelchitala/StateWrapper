@@ -17,6 +17,7 @@ class Isolated<T> {
         _repositories.addAll({identifier: {}});
       }
       instance = getRepo(identifier: identifier);
+
       if (instance != null) {
         if (instance[typeName] == null) {
           instance.addAll({typeName: typeInstance});
@@ -34,7 +35,11 @@ class Isolated<T> {
   getFromRepo({String? identifier, required String typeName}) {
     identifier = identifier == null ? "_" : identifier.toLowerCase();
     Map<String, T>? obj = _repositories[identifier];
-    return obj![typeName];
+
+    if (obj != null) {
+      return obj[typeName];
+    }
+    return null;
   }
 
   removeIdentifierFromRepo({String? identifier}) {
@@ -56,6 +61,14 @@ class Isolated<T> {
 
   getRepos() {
     return _repositories;
+  }
+
+  getRepoObjects() {
+    _repositories.forEach((key, value) {
+      value.forEach((key, val) {
+        print(val);
+      });
+    });
   }
 }
 
@@ -168,6 +181,13 @@ class StateManager {
     return null;
   }
 
+  List<G>? getObjects<T, G>({String? identifier}) {
+    if (_objects[T] != null) {
+      return _objects[T]!.getRepoObjects();
+    }
+    return null;
+  }
+
   removeObject<T>({required String identifier, required String objectName}) {
     if (_objects[T] != null) {
       _objects[T]!
@@ -181,7 +201,9 @@ class StateManager {
         T: {G: Isolated<ObjectWatcher<G>>()}
       });
     } else {
-      _watchers[T]!.addAll({G: Isolated<ObjectWatcher<G>>()});
+      if (_watchers[T]![G] == null) {
+        _watchers[T]!.addAll({G: Isolated<ObjectWatcher<G>>()});
+      }
     }
   }
 
@@ -274,18 +296,18 @@ class StateManager {
   }
 
   printRepos() {
-    print(_functions);
-    _functions.forEach((key, value) {
-      print(value.getRepos());
-    });
-    print(_variables);
-    _variables.forEach((key, value) {
-      print(value.getRepos());
-    });
-    print(_objects);
-    _objects.forEach((key, value) {
-      print(value.getRepos());
-    });
+    // print(_functions);
+    // _functions.forEach((key, value) {
+    //   print(value.getRepos());
+    // });
+    // print(_variables);
+    // _variables.forEach((key, value) {
+    //   print(value.getRepos());
+    // });
+    // print(_objects);
+    // _objects.forEach((key, value) {
+    //   print(value.getRepos());
+    // });
     print(_watchers);
     _watchers.forEach((key, value) {
       value.forEach((key, val) {
@@ -333,7 +355,7 @@ class VariableWrapper<T, G> {
   G obj;
   String variableName;
   late final String uuid;
-  final String indentifier;
+  final String identifier;
   Function(G current)? function;
   State? widget;
 
@@ -341,24 +363,26 @@ class VariableWrapper<T, G> {
       {this.widget,
       required this.obj,
       required this.variableName,
-      this.indentifier = "_"}) {
+      this.identifier = "_"}) {
     uuid = generateUUID();
     _stateManager.addVariable<T>(
-        identifier: indentifier,
+        identifier: identifier,
         variableName: variableName,
         function: () => obj);
 
     _stateManager.addObject<T, VariableWrapper>(
-        identifier: indentifier, objectName: variableName, object: this);
+        identifier: identifier, objectName: variableName, object: this);
 
     _stateManager.addWatcher<T, G>(
-        identifier: indentifier, typeName: variableName, object: obj);
+        identifier: identifier, typeName: variableName, object: obj);
 
     _stateManager.watch<T, G>(
-        identifier: indentifier,
+        identifier: identifier,
         typeName: variableName,
         function: (current) {
-          var func = _stateManager.getFunction<T>(functionName: "setState");
+          var func = _stateManager.getFunction<T>(
+              identifier: identifier, functionName: "setState");
+
           if (func != null) {
             func();
           }
@@ -369,14 +393,14 @@ class VariableWrapper<T, G> {
   }
 
   get value => _stateManager.getVariable<T>(
-        identifier: indentifier,
+        identifier: identifier,
         variableName: variableName,
       );
   get object => _stateManager.getObject<T, VariableWrapper>(
-      identifier: indentifier, objectName: variableName);
+      identifier: identifier, objectName: variableName);
 
   set value(val) => _stateManager.updateObject<T, G>(
-        identifier: indentifier,
+        identifier: identifier,
         typeName: variableName,
         update: (current) {
           obj = val;
@@ -386,7 +410,7 @@ class VariableWrapper<T, G> {
 
   void setValue(G value) {
     _stateManager.updateObject<T, G>(
-      identifier: indentifier,
+      identifier: identifier,
       typeName: variableName,
       update: (current) {
         obj = value;
@@ -401,9 +425,9 @@ class VariableWrapper<T, G> {
 
   void dispose() {
     _stateManager.removeVariable<T>(
-        identifier: indentifier, variableName: variableName);
+        identifier: identifier, variableName: variableName);
     _stateManager.removeWatcher<T, G>(
-        identifier: indentifier, typeName: variableName);
+        identifier: identifier, typeName: variableName);
   }
 }
 

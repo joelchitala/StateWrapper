@@ -27,7 +27,9 @@ class MainApp extends StatelessWidget {
                       _stateManager.getObject<BoxChange, VariableWrapper>(
                           identifier: "_", objectName: "open");
 
-                  open!.value = open.value ? false : true;
+                  if (open != null) {
+                    open.value = open.value ? false : true;
+                  }
                 },
                 child: const Text("Change"))
           ],
@@ -52,7 +54,12 @@ class _MainScreenState extends State<MainScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ChangeBtn(),
-        Center(child: BoxChange()),
+        Center(
+          child: BoxChange(),
+        ),
+        Center(
+          child: BoxChange(identifier: "box2"),
+        ),
       ],
     );
   }
@@ -69,7 +76,6 @@ class _ChangeBtnState extends State<ChangeBtn> {
   final StateManager _stateManager = StateManager();
   @override
   void initState() {
-    // open!.watch((curr) => print("Watching from Change Button ${open.value}"));
     super.initState();
   }
 
@@ -79,14 +85,16 @@ class _ChangeBtnState extends State<ChangeBtn> {
         onPressed: () {
           var open = _stateManager.getObject<BoxChange, VariableWrapper>(
               identifier: "_", objectName: "open");
-          open!.value = open.value ? false : true;
+          if (open != null) {
+            open.value = open.value ? false : true;
+          }
         },
         child: const Text("Change"));
   }
 }
 
 class BoxChange extends StatefulVariableWrapper {
-  const BoxChange({super.key});
+  const BoxChange({super.key, super.identifier});
 
   @override
   StateVariableWrapper<BoxChange> createState() => _BoxChangeState(this);
@@ -95,11 +103,11 @@ class BoxChange extends StatefulVariableWrapper {
 class _BoxChangeState extends StateVariableWrapper<BoxChange> {
   _BoxChangeState(super.reference);
 
-  late VariableWrapper<BoxChange, bool> open =
-      VariableWrapper<BoxChange, bool>(obj: false, variableName: "open");
+  late VariableWrapper<BoxChange, bool> open = VariableWrapper<BoxChange, bool>(
+      identifier: ref.identifier, obj: false, variableName: "open");
   late VariableWrapper<BoxChange, int> counter =
       VariableWrapper<BoxChange, int>(
-          indentifier: "counter", obj: 0, variableName: "counter");
+          identifier: ref.identifier, obj: 0, variableName: "counter");
 
   @override
   void dispose() {
@@ -111,7 +119,7 @@ class _BoxChangeState extends StateVariableWrapper<BoxChange> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    double factor = 0.5;
+    double factor = 0.3;
     return Container(
       color: open.value ? Colors.blue : Colors.amber,
       width: screenSize.width * factor,

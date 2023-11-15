@@ -13,11 +13,12 @@ class StatelessVariableWrapper extends StatelessWidget {
 }
 
 class StatefulVariableWrapper extends StatefulWidget {
-  const StatefulVariableWrapper({super.key});
+  final String identifier;
+  const StatefulVariableWrapper({super.key, this.identifier = "_"});
 
   @override
-  // ignore: no_logic_in_create_state
   StateVariableWrapper<StatefulVariableWrapper> createState() =>
+      // ignore: no_logic_in_create_state
       StateVariableWrapper(this);
 }
 
@@ -28,6 +29,7 @@ class StateVariableWrapper<T extends StatefulVariableWrapper> extends State {
   StateVariableWrapper(T reference) {
     ref = reference;
     stateManager.addFunction<T>(
+        identifier: ref.identifier,
         function: () {
           if (mounted) {
             setState(() {});
@@ -39,6 +41,7 @@ class StateVariableWrapper<T extends StatefulVariableWrapper> extends State {
   @override
   void dispose() {
     stateManager.removeFunction<T>(functionName: "setState");
+    stateManager;
     super.dispose();
   }
 
