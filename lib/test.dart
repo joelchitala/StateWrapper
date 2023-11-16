@@ -20,6 +20,7 @@ class CounterReactful extends StatefulVariableWrapper {
 
   @override
   ReactiveState<CounterReactful, Counter> createState() =>
+      // ignore: no_logic_in_create_state
       _CounterReactfulState(this);
 }
 
@@ -31,7 +32,7 @@ class _CounterReactfulState extends ReactiveState<CounterReactful, Counter> {
     return Container(
       width: 200,
       height: 200,
-      color: Color(0xfff0a09 + counter.counter),
+      color: const Color(0xfff0a090),
       child: Column(
         children: [Text("Hello ${counter.counter}")],
       ),
