@@ -29,6 +29,7 @@ class _CounterReactfulState extends ReactiveState<CounterReactful, Counter> {
   final Counter counter = Counter();
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       width: 200,
       height: 200,
